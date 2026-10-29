@@ -5,10 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Study Space</title>
 <style>
-:root{--bg:#eef6f1;--ink:#16302b;--mute:#5b756e;--card:rgba(255,255,255,.78);--line:rgba(22,48,43,.12);--acc:#1f8a70;--acc2:#f2b441;--warn:#d4533b;--b1:#9fdcc4;--b2:#b9d4f5;--b3:#f7e2a8;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1c19;--ink:#e6f3ee;--mute:#8fb0a6;--card:rgba(20,40,36,.78);--line:rgba(230,243,238,.14);--acc:#3dc9a0;--acc2:#f2b441;--warn:#ff7b62;--b1:#14564a;--b2:#1c3a63;--b3:#5a4a14}}
-:root[data-theme="dark"]{--bg:#0e1c19;--ink:#e6f3ee;--mute:#8fb0a6;--card:rgba(20,40,36,.78);--line:rgba(230,243,238,.14);--acc:#3dc9a0;--acc2:#f2b441;--warn:#ff7b62;--b1:#14564a;--b2:#1c3a63;--b3:#5a4a14}
+:root{--bg:#eef6f1;--ink:#16302b;--mute:#5b756e;--card:rgba(255,255,255,.78);--line:rgba(22,48,43,.12);--acc:#1f8a70;--acc2:#f2b441;--warn:#d4533b;--b1:#9fdcc4;--b2:#b9d4f5;--b3:#f7e2a8}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1c19;--ink:#e6f3ee;--mute:#8fb0a6;--card:rgba(20,40,36,.78);--line:rgba(230,243,238,.14);--acc:#3dc9a0;--warn:#ff7b62;--b1:#14564a;--b2:#1c3a63;--b3:#5a4a14}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Trebuchet MS",Verdana,system-ui,sans-serif;min-height:100vh}
 h1,h2,h3{font-family:Georgia,"Times New Roman",serif;margin:0;line-height:1.2}
@@ -24,188 +22,222 @@ h1,h2,h3{font-family:Georgia,"Times New Roman",serif;margin:0;line-height:1.2}
 button,input,select{font:inherit;color:inherit}
 button{cursor:pointer;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 14px}
 button.p{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:700}
-button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--acc2);outline-offset:2px}
+:focus-visible{outline:3px solid var(--acc2);outline-offset:2px}
 input,select{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
 label{display:block;font-size:.85rem;color:var(--mute);margin:10px 0 4px}
 .hide{display:none!important}
-.login{max-width:420px;margin:12vh auto 0;text-align:center}
-.login h1{font-size:2.4rem}
-.login p{color:var(--mute)}
-.login .row{display:grid;gap:10px;margin-top:14px}
+.center{max-width:420px;margin:12vh auto 0;text-align:center}
+.center h1{font-size:2.4rem}
+.center p,.mute{color:var(--mute)}
+.stack{display:grid;gap:10px;margin-top:14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.err{color:var(--warn);font-size:.9rem;min-height:1.3em}
 header.top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:space-between;margin-bottom:12px}
-header.top h2{font-size:1.5rem}
-nav{display:flex;gap:6px}
+nav,.acts{display:flex;gap:6px;flex-wrap:wrap}
 nav button[aria-current="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .alert{display:flex;gap:10px;align-items:center;justify-content:space-between;background:var(--warn);color:#fff;border-radius:12px;padding:10px 14px;margin-bottom:12px;animation:pulse 1.6s ease-in-out 3}
-.alert button{background:rgba(255,255,255,.2);color:#fff;border-color:rgba(255,255,255,.4)}
 @keyframes pulse{50%{transform:scale(1.015)}}
 .grid{display:grid;gap:14px;grid-template-columns:1.6fr 1fr}
 @media (max-width:760px){.grid{grid-template-columns:1fr}}
 .task{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)}
-.task:first-of-type{border-top:0}
-.task .m{flex:1;min-width:0}
-.task b{display:block}
-.task small{color:var(--mute)}
+.task .m{flex:1;min-width:0}.task b{display:block}.task small{color:var(--mute)}
+.acts button{padding:4px 10px;font-size:.85rem}
 .tag{display:inline-block;font-size:.75rem;padding:1px 8px;border-radius:99px;background:var(--line);margin-right:4px}
 .tag.q{background:var(--acc2);color:#3a2a00}
-.due-soon{color:var(--warn);font-weight:700}
+.soon{color:var(--warn)!important;font-weight:700}
 .done b{text-decoration:line-through;color:var(--mute)}
-.acts{display:flex;gap:6px;flex-wrap:wrap}
-.acts button{padding:4px 10px;font-size:.85rem}
-.plant{font-size:5.5rem;text-align:center;line-height:1;transition:font-size .5s;margin:6px 0}
+.plant{font-size:5rem;text-align:center;line-height:1;margin:6px 0;transition:font-size .5s}
 .bar{height:10px;border-radius:99px;background:var(--line);overflow:hidden}
 .bar span{display:block;height:100%;background:var(--acc);transition:width .5s}
 .rank{display:inline-block;padding:3px 12px;border-radius:99px;background:var(--acc2);color:#3a2a00;font-weight:700}
-table{width:100%;border-collapse:collapse}
-th,td{text-align:left;padding:8px 6px;border-top:1px solid var(--line);font-size:.92rem}
-th{border-top:0;color:var(--mute);font-weight:600}
-.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:8px 6px;border-top:1px solid var(--line);font-size:.92rem}th{border-top:0;color:var(--mute)}
+.scroll{overflow-x:auto}.me{font-weight:700;background:var(--line)}
+.empty{padding:18px 0;color:var(--mute)}
 dialog{border:1px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink);max-width:360px;width:90%}
 dialog::backdrop{background:rgba(0,0,0,.4)}
-.me{font-weight:700;background:var(--line)}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 </style>
 </head>
 <body>
 <div class="bg" aria-hidden="true"><i></i><i></i><i></i></div>
 <div class="wrap">
 
-<section id="login" class="card login">
+<section id="setup" class="card center hide"><h2>Connect Firebase first</h2>
+<p>Open <code>index.html</code>, find <code>firebaseConfig</code>, and paste in your Firebase project settings.</p></section>
+
+<section id="login" class="card center hide">
   <h1>Study Space</h1>
-  <p>Know what’s due next, and grow a plant while you finish it.</p>
-  <div class="row">
-    <button class="p" data-login="google">Continue with Google</button>
-    <input id="em" type="email" placeholder="Email address" aria-label="Email address">
-    <div class="two"><button data-login="student">Log in as student</button><button data-login="instructor">Log in as instructor</button></div>
+  <p>Log in to see what’s due next and grow your plant as you finish.</p>
+  <div class="stack">
+    <button class="p" id="g">Continue with Google</button>
+    <input id="em" type="email" placeholder="Email address" aria-label="Email address" autocomplete="email">
+    <input id="pw" type="password" placeholder="Password (6+ characters)" aria-label="Password" autocomplete="current-password">
+    <div class="two"><button id="li">Log in</button><button id="su">Create account</button></div>
+    <div class="err" id="err" role="alert"></div>
   </div>
-  <p style="font-size:.8rem">Prototype: sign-in is simulated and data stays in this browser.</p>
+</section>
+
+<section id="role" class="card center hide">
+  <h2>Welcome! Who are you?</h2><p>You can’t change this later, so choose carefully.</p>
+  <div class="stack two"><button class="p" data-role="student">I’m a student</button><button class="p" data-role="instructor">I’m an instructor</button></div>
 </section>
 
 <main id="app" class="hide">
-  <header class="top">
-    <h2 id="hello">Study Space</h2>
-    <nav id="nav"></nav>
-    <div class="acts"><button id="snd" aria-pressed="true">Sound on</button><button id="out">Log out</button></div>
-  </header>
+  <header class="top"><h2 id="hello"></h2><nav id="nav"></nav>
+    <div class="acts"><button id="snd" aria-pressed="true">Sound on</button><button id="out">Log out</button></div></header>
   <div id="alerts" aria-live="polite"></div>
   <div id="view"></div>
 </main>
 </div>
 
 <dialog id="dlg"><form method="dialog" id="dform" style="margin:0">
-  <h3 id="dt"></h3><label for="dscore" id="dl">Score</label><input id="dscore" type="number" min="0" step="1">
-  <div class="acts" style="margin-top:14px"><button class="p" type="submit" id="dok">Save</button><button type="button" id="dno">Cancel</button></div>
+  <h3>Mark as done</h3><label for="ds" id="dl">Your score</label><input id="ds" type="number" min="0" step="1">
+  <div class="acts" style="margin-top:14px"><button class="p" type="submit">Save</button><button type="button" id="dno">Cancel</button></div>
 </form></dialog>
 
-<script>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {getAuth,onAuthStateChanged,signInWithPopup,GoogleAuthProvider,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {getFirestore,collection,doc,setDoc,addDoc,deleteDoc,updateDoc,onSnapshot,query,where} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+/* ====== PASTE YOUR FIREBASE CONFIG HERE (Firebase console > Project settings > Your apps) ====== */
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  appId: "YOUR_APP_ID"
+};
+/* ================================================================================================ */
+
 const $=s=>document.querySelector(s);
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const H=3600e3,D=24*H,now=()=>Date.now();
 const RANKS=['Mythical Immortal','Mythical Honor','Mythic','Legend'];
-const MATES=[['Ana',9],['Ben',8],['Carla',7],['Dan',7],['Ella',6],['Finn',5],['Gia',5],['Hugo',4],['Iris',3],['Jon',3],['Kim',2],['Leo',1],['Mia',0],['Noel',0]];
-let S;
-function seed(){const n=now();return{role:null,name:'',tab:'tasks',sound:true,
- tasks:[
- {id:1,t:'Quiz 2: Network Topologies',type:'Quiz',course:'Networking 1',due:n+2*H,by:'inst',max:20,file:'reviewer.pdf'},
- {id:2,t:'Lab activity: Subnetting',type:'Activity',course:'Networking 1',due:n+1*D+3*H,by:'inst',max:50,file:'lab2.docx'},
- {id:3,t:'Essay: Ethics in IT',type:'Assignment',course:'Social Issues',due:n+3*D,by:'inst',max:100},
- {id:4,t:'Quiz 3: Database Basics',type:'Quiz',course:'Databases',due:n+5*D,by:'inst',max:30},
- {id:5,t:'Review lecture notes',type:'Personal',course:'',due:n+2*D,by:'me'}],
- mates:MATES.map(([a,d],i)=>({n:a,done:d,xp:d*12+(i%3)}))}}
-function load(){try{S=JSON.parse(localStorage.getItem('studyspace-v1'))}catch(e){}if(!S||!S.tasks)S=seed()}
-function save(){try{localStorage.setItem('studyspace-v1',JSON.stringify(S))}catch(e){}}
-load();
+const show=id=>['setup','login','role','app'].forEach(x=>$('#'+x).classList.toggle('hide',x!==id));
 
-const fmt=t=>new Date(t).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
-function left(t){const d=t-now();if(d<0)return'Overdue';const h=Math.floor(d/H);return h<1?Math.max(1,Math.round(d/6e4))+' min left':h<48?h+' h left':Math.floor(h/24)+' days left'}
-const mine=()=>S.tasks.filter(t=>t.by==='inst'||t.by==='me');
-const doneN=()=>S.tasks.filter(t=>t.done).length;
-const xp=()=>S.tasks.filter(t=>t.done).reduce((a,t)=>a+10+(t.early?5:0),0);
+if(firebaseConfig.apiKey.startsWith('YOUR')){show('setup');throw new Error('Firebase config missing')}
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 
+let user=null,prof=null,instTasks=[],myTasks=[],prog=[],users=[],tab='tasks',sound=true,unsubs=[],seen=new Set(),ac;
+
+/* ---------- login ---------- */
+const fail=e=>$('#err').textContent=({'auth/invalid-credential':'Wrong email or password.','auth/email-already-in-use':'That email already has an account. Try logging in.','auth/weak-password':'Use a password with at least 6 characters.','auth/invalid-email':'Enter a valid email address.','auth/popup-closed-by-user':''})[e.code]??'Could not log in. '+e.code;
+$('#g').onclick=()=>signInWithPopup(auth,new GoogleAuthProvider()).catch(fail);
+$('#li').onclick=()=>signInWithEmailAndPassword(auth,$('#em').value.trim(),$('#pw').value).catch(fail);
+$('#su').onclick=()=>createUserWithEmailAndPassword(auth,$('#em').value.trim(),$('#pw').value).catch(fail);
+$('#out').onclick=()=>signOut(auth);
+
+onAuthStateChanged(auth,u=>{
+  unsubs.forEach(f=>f());unsubs=[];user=u;prof=null;instTasks=[];myTasks=[];prog=[];users=[];
+  if(!u){show('login');return}
+  try{ac=ac||new (window.AudioContext||window.webkitAudioContext)()}catch(e){}
+  unsubs.push(onSnapshot(doc(db,'users',u.uid),s=>{
+    if(!s.exists()){show('role');return}
+    const first=!prof;prof=s.data();if(first){tab=prof.role==='student'?'tasks':'create';subscribe()}render()}));
+});
+document.addEventListener('click',e=>{const r=e.target.closest('[data-role]');if(!r)return;
+  setDoc(doc(db,'users',user.uid),{name:user.displayName||user.email.split('@')[0],email:user.email,role:r.dataset.role,at:now()})});
+
+function subscribe(){
+  unsubs.push(onSnapshot(query(collection(db,'tasks'),where('by','==','inst')),s=>{instTasks=s.docs.map(d=>({id:d.id,...d.data()}));render()}));
+  unsubs.push(onSnapshot(query(collection(db,'tasks'),where('owner','==',user.uid),where('by','==','me')),s=>{myTasks=s.docs.map(d=>({id:d.id,...d.data()}));render()}));
+  unsubs.push(onSnapshot(collection(db,'progress'),s=>{prog=s.docs.map(d=>d.data());render()}));
+  unsubs.push(onSnapshot(query(collection(db,'users'),where('role','==','student')),s=>{users=s.docs.map(d=>({uid:d.id,...d.data()}));render()}));
+}
+
+/* ---------- helpers ---------- */
+const fmt=t=>new Date(t).toLocaleString([],{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+const left=t=>{const d=t-now();if(d<0)return'overdue';const h=Math.floor(d/H);return h<1?Math.max(1,Math.round(d/6e4))+' min left':h<48?h+' h left':Math.floor(h/24)+' days left'};
+const pmap=()=>Object.fromEntries(prog.filter(p=>p.uid===user.uid).map(p=>[p.taskId,p]));
+const allTasks=()=>[...instTasks,...myTasks].sort((a,b)=>a.due-b.due);
+const doneOf=uid=>prog.filter(p=>p.uid===uid&&p.done);
+const xpOf=uid=>doneOf(uid).reduce((a,p)=>a+10+(p.early?5:0),0);
 function standings(){
- const all=[{n:'You',done:doneN(),xp:xp(),me:1},...S.mates.map(m=>({...m}))].sort((a,b)=>b.done-a.done||b.xp-a.xp);
- all.forEach((s,i)=>s.rank=s.done===0?'Warrior':i<12?RANKS[Math.floor(i/3)]:'Elite');
- return all}
+  const rows=users.map(u=>({uid:u.uid,n:u.name,done:doneOf(u.uid).length,xp:xpOf(u.uid)})).sort((a,b)=>b.done-a.done||b.xp-a.xp);
+  rows.forEach((r,i)=>r.rank=r.done===0?'Warrior':i<12?RANKS[Math.floor(i/3)]:'Elite');return rows}
 
-/* alarm-style sound */
-let ac;function beep(){if(!S.sound)return;try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();[0,.25,.5].forEach(o=>{const x=ac.createOscillator(),g=ac.createGain();x.frequency.value=o===.25?660:880;x.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(.15,ac.currentTime+o);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+o+.2);x.start(ac.currentTime+o);x.stop(ac.currentTime+o+.22)})}catch(e){}}
-let seen=new Set();
+function beep(){if(!sound||!ac)return;[0,.25,.5].forEach((o,i)=>{const x=ac.createOscillator(),g=ac.createGain();x.frequency.value=i===1?660:880;x.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(.15,ac.currentTime+o);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+o+.2);x.start(ac.currentTime+o);x.stop(ac.currentTime+o+.22)})}
 function alerts(){
- if(S.role!=='student')return $('#alerts').innerHTML='';
- const soon=S.tasks.filter(t=>!t.done&&t.due-now()<24*H).sort((a,b)=>a.due-b.due);
- $('#alerts').innerHTML=soon.map(t=>`<div class="alert" role="alert"><span><b>${t.due<now()?'Past deadline':t.due-now()<6*H?'Due today':'Due within a day'}:</b> ${esc(t.t)} · ${fmt(t.due)}</span><button data-open="${t.id}">View</button></div>`).join('');
- if(soon.some(t=>!seen.has(t.id))){beep();soon.forEach(t=>seen.add(t.id))}}
+  if(prof.role!=='student'){$('#alerts').innerHTML='';return}
+  const p=pmap(),soon=allTasks().filter(t=>!(p[t.id]&&p[t.id].done)&&t.due-now()<D);
+  $('#alerts').innerHTML=soon.map(t=>`<div class="alert" role="alert"><span><b>${t.due<now()?'Past deadline':t.due-now()<6*H?'Due today':'Due within a day'}:</b> ${esc(t.title)} · ${fmt(t.due)}</span></div>`).join('');
+  if(soon.some(t=>!seen.has(t.id))){beep();soon.forEach(t=>seen.add(t.id))}}
 
-/* views */
-function nav(){const tabs=S.role==='student'?[['tasks','Tasks'],['garden','Garden & rank']]:[['create','Create task'],['monitor','Student progress']];
- $('#nav').innerHTML=tabs.map(([k,l])=>`<button data-tab="${k}" aria-current="${S.tab===k}">${l}</button>`).join('')}
-function taskRow(t){const stu=S.role==='student';
- return `<div class="task ${t.done?'done':''}"><div class="m"><b>${esc(t.t)}</b>
- <span class="tag ${t.type==='Quiz'?'q':''}">${t.type}</span>${t.course?`<small>${esc(t.course)} · </small>`:''}<small class="${!t.done&&t.due-now()<24*H?'due-soon':''}">${fmt(t.due)} (${t.done?'done':left(t.due)})</small>
- ${t.file?`<br><small>Attached: ${esc(t.file)}</small>`:''}${t.sub?`<br><small>Submitted: ${esc(t.sub)}</small>`:''}${t.done?`<br><small>Score: ${t.score}${t.max?'/'+t.max:''}${t.early?' · early bonus +5 XP':''}</small>`:''}</div>
- <div class="acts">${stu&&!t.done?`${t.by==='inst'&&!t.sub?`<button data-sub="${t.id}">Submit</button>`:''}<button class="p" data-done="${t.id}">Mark done</button>`:''}${t.by==='me'?`<button data-edit="${t.id}">Edit</button><button data-del="${t.id}">Delete</button>`:''}</div></div>`}
+/* ---------- views ---------- */
+function taskRow(t){
+  const p=pmap()[t.id]||{},stu=prof.role==='student';
+  return `<div class="task ${p.done?'done':''}"><div class="m"><b>${esc(t.title)}</b>
+  <span class="tag ${t.type==='Quiz'?'q':''}">${t.type}</span>${t.course?`<small>${esc(t.course)} · </small>`:''}<small class="${!p.done&&t.due-now()<D?'soon':''}">${fmt(t.due)} (${p.done?'done':left(t.due)})</small>
+  ${t.file?`<br><small>Attached: ${esc(t.file)}</small>`:''}${p.sub?`<br><small>Submitted: ${esc(p.sub)}</small>`:''}${p.done?`<br><small>Score: ${p.score}${t.max?'/'+t.max:''}${p.early?' · early bonus +5 XP':''}</small>`:''}</div>
+  <div class="acts">${stu&&!p.done?`${t.by==='inst'?'<button data-sub="'+t.id+'">Submit</button>':''}<button class="p" data-done="${t.id}">Mark done</button>`:''}${t.by==='me'?`<button data-edit="${t.id}">Edit</button><button data-del="${t.id}">Delete</button>`:''}</div></div>`}
+
 function studentTasks(){
- const list=[...S.tasks].sort((a,b)=>(a.done-b.done)||a.due-b.due);
- return `<div class="grid"><div class="card"><h3>Your tasks, nearest deadline first</h3><div>${list.map(taskRow).join('')||'<p>No tasks yet. Add one on the right.</p>'}</div></div>
- <form class="card" id="pf"><h3>Add a personal task</h3><label for="pt">Title</label><input id="pt" required>
- <label for="pd">Deadline</label><input id="pd" type="datetime-local" required>
- <label for="pfile">Attach a file</label><input id="pfile" type="file">
- <button class="p" style="margin-top:14px">Add task</button></form></div>`}
+  const p=pmap(),list=allTasks().sort((a,b)=>(!!(p[a.id]&&p[a.id].done)-!!(p[b.id]&&p[b.id].done))||a.due-b.due);
+  return `<div class="grid"><div class="card"><h3>Your tasks, nearest deadline first</h3>${list.map(taskRow).join('')||'<p class="empty">Nothing here yet. Tasks from your instructors will show up here, and you can add your own.</p>'}</div>
+  <form class="card" id="pf"><h3>Add a personal task</h3><label for="pt">Title</label><input id="pt" required>
+  <label for="pd">Deadline</label><input id="pd" type="datetime-local" required>
+  <label for="pfile">Attach a file</label><input id="pfile" type="file"><button class="p" style="margin-top:14px">Add task</button></form></div>`}
+
 function garden(){
- const d=doneN(),lv=Math.floor(d/3),stage=['🌱','🌿','🪴','🌳','🌸'][Math.min(lv,4)],size=4+Math.min(lv,6)*.5;
- const st=standings(),me=st.find(s=>s.me);
- return `<div class="grid"><div class="card" style="text-align:center"><h3>Your plant</h3><div class="plant" style="font-size:${size}rem">${stage}</div>
- <p><b>Level ${lv}</b> · ${d} task${d===1?'':'s'} done · ${xp()} XP</p>
- <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="3" aria-valuenow="${d%3}"><span style="width:${(d%3)/3*100}%"></span></div>
- <p style="color:var(--mute);font-size:.9rem">${3-d%3} more task${3-d%3===1?'':'s'} to level ${lv+1}. Finishing before the deadline gives +5 XP.</p>
- <p>Your rank: <span class="rank">${me.rank}</span></p></div>
- <div class="card"><h3>Class ranking</h3><div class="scroll"><table><tr><th>#</th><th>Student</th><th>Done</th><th>XP</th><th>Rank</th></tr>
- ${st.map((s,i)=>`<tr class="${s.me?'me':''}"><td>${i+1}</td><td>${s.n}</td><td>${s.done}</td><td>${s.xp}</td><td>${s.rank}</td></tr>`).join('')}</table></div></div></div>`}
+  const me=standings().find(r=>r.uid===user.uid)||{done:0,xp:0,rank:'Warrior'},d=me.done,lv=Math.floor(d/3);
+  const st=standings();
+  return `<div class="grid"><div class="card" style="text-align:center"><h3>Your plant</h3><div class="plant" style="font-size:${4+Math.min(lv,6)*.5}rem">${['🌱','🌿','🪴','🌳','🌸'][Math.min(lv,4)]}</div>
+  <p><b>Level ${lv}</b> · ${d} task${d===1?'':'s'} done · ${me.xp} XP</p>
+  <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="3" aria-valuenow="${d%3}"><span style="width:${d%3/3*100}%"></span></div>
+  <p class="mute" style="font-size:.9rem">${3-d%3} more task${3-d%3===1?'':'s'} to reach level ${lv+1}. Finishing before the deadline gives +5 XP.</p>
+  <p>Your rank: <span class="rank">${me.rank}</span></p></div>
+  <div class="card"><h3>Class ranking</h3><div class="scroll"><table><tr><th>#</th><th>Student</th><th>Done</th><th>XP</th><th>Rank</th></tr>
+  ${st.map((s,i)=>`<tr class="${s.uid===user.uid?'me':''}"><td>${i+1}</td><td>${esc(s.n)}</td><td>${s.done}</td><td>${s.xp}</td><td>${s.rank}</td></tr>`).join('')}</table></div></div></div>`}
+
 function create(){
- const mine=S.tasks.filter(t=>t.by==='inst').sort((a,b)=>a.due-b.due);
- return `<div class="grid"><form class="card" id="cf"><h3>Create a task for students</h3>
- <label for="ct">Title</label><input id="ct" required>
- <div class="two"><div><label for="cy">Type</label><select id="cy"><option>Activity</option><option>Assignment</option><option>Quiz</option></select></div>
- <div><label for="cm">Total points</label><input id="cm" type="number" min="1" value="50"></div></div>
- <label for="cc">Course</label><input id="cc" placeholder="e.g. Networking 1">
- <label for="cd">Deadline</label><input id="cd" type="datetime-local" required>
- <label for="cfile">Attach a file</label><input id="cfile" type="file">
- <button class="p" style="margin-top:14px">Publish to students</button></form>
- <div class="card"><h3>Published tasks</h3>${mine.map(t=>`<div class="task"><div class="m"><b>${esc(t.t)}</b><span class="tag ${t.type==='Quiz'?'q':''}">${t.type}</span><small>${fmt(t.due)}</small></div><button data-del="${t.id}">Delete</button></div>`).join('')}</div></div>`}
+  const mine=instTasks.filter(t=>t.owner===user.uid).sort((a,b)=>a.due-b.due);
+  return `<div class="grid"><form class="card" id="cf"><h3>Create a task for students</h3>
+  <label for="ct">Title</label><input id="ct" required>
+  <div class="two"><div><label for="cy">Type</label><select id="cy"><option>Activity</option><option>Assignment</option><option>Quiz</option></select></div>
+  <div><label for="cm">Total points</label><input id="cm" type="number" min="1" value="50"></div></div>
+  <label for="cc">Course</label><input id="cc" placeholder="e.g. Networking 1">
+  <label for="cd">Deadline</label><input id="cd" type="datetime-local" required>
+  <label for="cfile">Attach a file</label><input id="cfile" type="file"><button class="p" style="margin-top:14px">Publish to students</button></form>
+  <div class="card"><h3>Published tasks</h3>${mine.map(t=>`<div class="task"><div class="m"><b>${esc(t.title)}</b><span class="tag ${t.type==='Quiz'?'q':''}">${t.type}</span><small>${fmt(t.due)}</small></div><button data-del="${t.id}">Delete</button></div>`).join('')||'<p class="empty">You haven’t published anything yet.</p>'}</div></div>`}
+
 function monitor(){
- const total=S.tasks.filter(t=>t.by==='inst').length||1;
- const rows=[...S.mates.map(m=>({n:m.n,d:Math.min(m.done,total)})),{n:'You (demo student)',d:S.tasks.filter(t=>t.by==='inst'&&t.done).length}].sort((a,b)=>b.d-a.d);
- return `<div class="card"><h3>Student progress on your ${total} published task${total===1?'':'s'}</h3><div class="scroll"><table><tr><th>Student</th><th>Completed</th><th style="width:40%">Progress</th></tr>
- ${rows.map(r=>`<tr><td>${esc(r.n)}</td><td>${r.d}/${total}</td><td><div class="bar"><span style="width:${r.d/total*100}%"></span></div></td></tr>`).join('')}</table></div></div>`}
+  const mine=instTasks.filter(t=>t.owner===user.uid),ids=new Set(mine.map(t=>t.id)),total=mine.length;
+  if(!total)return `<div class="card"><h3>Student progress</h3><p class="empty">Publish a task first, then you’ll see how each student is doing.</p></div>`;
+  const rows=users.map(u=>({n:u.name,d:prog.filter(p=>p.uid===u.uid&&p.done&&ids.has(p.taskId)).length})).sort((a,b)=>b.d-a.d);
+  return `<div class="card"><h3>Progress on your ${total} published task${total===1?'':'s'}</h3>${rows.length?`<div class="scroll"><table><tr><th>Student</th><th>Completed</th><th style="width:40%">Progress</th></tr>
+  ${rows.map(r=>`<tr><td>${esc(r.n)}</td><td>${r.d}/${total}</td><td><div class="bar"><span style="width:${r.d/total*100}%"></span></div></td></tr>`).join('')}</table></div>`:'<p class="empty">No students have joined yet.</p>'}</div>`}
 
 function render(){
- const login=!S.role;$('#login').classList.toggle('hide',!login);$('#app').classList.toggle('hide',login);if(login)return;
- $('#hello').textContent=(S.role==='student'?'Hi, ':'Instructor: ')+S.name;
- $('#snd').textContent=S.sound?'Sound on':'Sound off';$('#snd').setAttribute('aria-pressed',S.sound);
- nav();alerts();
- $('#view').innerHTML=S.role==='student'?(S.tab==='garden'?garden():studentTasks()):(S.tab==='monitor'?monitor():create())}
+  if(!user||!prof)return;show('app');
+  $('#hello').textContent=(prof.role==='student'?'Hi, ':'Instructor: ')+prof.name;
+  $('#snd').textContent=sound?'Sound on':'Sound off';$('#snd').setAttribute('aria-pressed',sound);
+  const tabs=prof.role==='student'?[['tasks','Tasks'],['garden','Garden & rank']]:[['create','Create task'],['monitor','Student progress']];
+  $('#nav').innerHTML=tabs.map(([k,l])=>`<button data-tab="${k}" aria-current="${tab===k}">${l}</button>`).join('');
+  alerts();
+  const f=document.activeElement;if(f&&f.closest&&f.closest('form')&&f.value)return; // don't wipe a form while typing
+  $('#view').innerHTML=prof.role==='student'?(tab==='garden'?garden():studentTasks()):(tab==='monitor'?monitor():create());
+}
 
-/* events */
-document.addEventListener('click',e=>{
- const b=e.target.closest('button');if(!b)return;const d=b.dataset;
- if(d.login){const em=$('#em').value.trim();S.role=d.login==='instructor'?'instructor':'student';S.name=em?em.split('@')[0]:(S.role==='student'?'Student':'Instructor');S.tab=S.role==='student'?'tasks':'create';try{ac=ac||new (window.AudioContext||window.webkitAudioContext)()}catch(x){}seen=new Set();save();render()}
- else if(d.tab){S.tab=d.tab;render()}
- else if(b.id==='out'){S.role=null;save();render()}
- else if(b.id==='snd'){S.sound=!S.sound;if(S.sound)beep();save();render()}
- else if(d.open){S.tab='tasks';render()}
- else if(d.sub){const f=document.createElement('input');f.type='file';f.onchange=()=>{const t=S.tasks.find(x=>x.id==d.sub);t.sub=f.files[0]?f.files[0].name:'';save();render()};f.click()}
- else if(d.done)ask('Mark as done','Your score',x=>{const t=S.tasks.find(y=>y.id==d.done);t.done=true;t.score=x;t.early=now()<t.due;t.at=now();save();render()},S.tasks.find(y=>y.id==d.done).max)
- else if(d.del){S.tasks=S.tasks.filter(t=>t.id!=d.del);save();render()}
- else if(d.edit){const t=S.tasks.find(x=>x.id==d.edit);const n=prompt('Task title',t.t);if(n){t.t=n;save();render()}}
+/* ---------- actions ---------- */
+const pid=t=>user.uid+'_'+t;
+const task=id=>allTasks().find(t=>t.id===id);
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+  if(d.tab){tab=d.tab;render()}
+  else if(b.id==='snd'){sound=!sound;if(sound)beep();render()}
+  else if(d.sub){const f=document.createElement('input');f.type='file';f.onchange=()=>{if(f.files[0])setDoc(doc(db,'progress',pid(d.sub)),{uid:user.uid,name:prof.name,taskId:d.sub,sub:f.files[0].name},{merge:true})};f.click()}
+  else if(d.done){const t=task(d.done);$('#dl').textContent='Your score'+(t.max?` (out of ${t.max})`:'');$('#ds').max=t.max||'';$('#ds').value='';
+    $('#dform').onsubmit=()=>setDoc(doc(db,'progress',pid(t.id)),{uid:user.uid,name:prof.name,taskId:t.id,done:true,score:Number($('#ds').value)||0,early:now()<t.due,at:now()},{merge:true});
+    $('#dno').onclick=()=>$('#dlg').close();$('#dlg').showModal()}
+  else if(d.del){deleteDoc(doc(db,'tasks',d.del))}
+  else if(d.edit){const t=task(d.edit),n=prompt('Task title',t.title);if(n)updateDoc(doc(db,'tasks',t.id),{title:n})}
 });
-function ask(title,label,cb,max){$('#dt').textContent=title;$('#dl').textContent=label+(max?` (out of ${max})`:'');$('#dscore').max=max||'';$('#dscore').value='';$('#dlg').showModal();
- $('#dform').onsubmit=()=>cb(Number($('#dscore').value)||0);$('#dno').onclick=()=>$('#dlg').close()}
-document.addEventListener('submit',e=>{
- if(e.target.id==='pf'){e.preventDefault();const f=$('#pfile').files[0];S.tasks.push({id:now(),t:$('#pt').value,type:'Personal',course:'',due:new Date($('#pd').value).getTime(),by:'me',file:f?f.name:''});save();render()}
- if(e.target.id==='cf'){e.preventDefault();const f=$('#cfile').files[0];S.tasks.push({id:now(),t:$('#ct').value,type:$('#cy').value,course:$('#cc').value,due:new Date($('#cd').value).getTime(),by:'inst',max:+$('#cm').value||0,file:f?f.name:''});save();render()}
+document.addEventListener('submit',async e=>{
+  if(e.target.id==='pf'){e.preventDefault();const f=$('#pfile').files[0];
+    await addDoc(collection(db,'tasks'),{title:$('#pt').value,type:'Personal',course:'',due:new Date($('#pd').value).getTime(),by:'me',owner:user.uid,file:f?f.name:''});e.target.reset()}
+  if(e.target.id==='cf'){e.preventDefault();const f=$('#cfile').files[0];
+    await addDoc(collection(db,'tasks'),{title:$('#ct').value,type:$('#cy').value,course:$('#cc').value,due:new Date($('#cd').value).getTime(),max:Number($('#cm').value)||0,by:'inst',owner:user.uid,file:f?f.name:''});e.target.reset()}
+  document.activeElement&&document.activeElement.blur();render();
 });
-setInterval(()=>{if(S.role==='student')alerts()},30000);
-render();
+setInterval(()=>{if(prof&&prof.role==='student')alerts()},30000);
 </script>
 </body>
 </html>
