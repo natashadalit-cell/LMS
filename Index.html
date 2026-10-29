@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Study Space</title>
+<style>
+:root{--bg:#eef6f1;--ink:#16302b;--mute:#5b756e;--card:rgba(255,255,255,.88);--line:rgba(22,48,43,.15);--acc:#1f8a70;--gold:#f2b441;--warn:#c74735}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,Arial,sans-serif;min-height:100vh}
+.wrap{max-width:1000px;margin:auto;padding:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 8px 30px #16302b0b}
+h1,h2,h3{font-family:Georgia,serif;line-height:1.2;margin:0 0 10px}p{color:var(--mute)}button,input,select{font:inherit;color:inherit}button{cursor:pointer;border:1px solid var(--line);background:white;border-radius:10px;padding:9px 13px}button.primary{background:var(--acc);border-color:var(--acc);color:white;font-weight:700}button.danger{color:var(--warn)}input,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:white}label{display:block;color:var(--mute);font-size:.9rem;margin:12px 0 5px}.center{max-width:440px;margin:9vh auto;text-align:center}.stack{display:grid;gap:10px;margin-top:14px}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hidden{display:none!important}.err{color:var(--warn);min-height:1.3em;font-size:.9rem}.top{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}nav,.actions{display:flex;gap:7px;flex-wrap:wrap}nav button[aria-current=true]{background:var(--ink);color:white}.grid{display:grid;grid-template-columns:1.5fr 1fr;gap:14px}.task{display:flex;gap:12px;align-items:flex-start;border-top:1px solid var(--line);padding:13px 0}.task-main{flex:1;min-width:0}.task b{display:block;overflow-wrap:anywhere}.task small{color:var(--mute)}.actions button{padding:5px 9px;font-size:.9rem}.tag{display:inline-block;background:#dcebe4;padding:1px 8px;border-radius:99px;font-size:.76rem;margin:4px 4px 3px 0}.quiz{background:#f8e5b6}.overdue{color:var(--warn)!important;font-weight:700}.done b{text-decoration:line-through;color:var(--mute)}.empty{padding:12px 0;color:var(--mute)}.plant{text-align:center;font-size:5rem;line-height:1.2}.bar{height:10px;background:#dce8e1;border-radius:99px;overflow:hidden}.bar span{display:block;height:100%;background:var(--acc)}.scroll{overflow:auto}table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:8px;border-top:1px solid var(--line);font-size:.9rem}.muted{color:var(--mute)}.alert{background:#c74735;color:white;border-radius:10px;padding:10px 12px;margin-bottom:8px}.alert span{color:white}dialog{border:1px solid var(--line);border-radius:14px;max-width:380px;width:92%;background:var(--bg);color:var(--ink)}dialog::backdrop{background:#0006}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.wrap{padding:12px}.center{margin-top:5vh}.task{flex-wrap:wrap}.actions{width:100%}}
+</style>
+</head>
+<body><div class="wrap">
+<section id="login" class="card center">
+<h1>Study Space 🌱</h1><p>Organize your deadlines, finish tasks, and grow your plant.</p>
+<div class="stack">
+<button class="primary" id="google">Continue with Google</button>
+<input id="email" type="email" placeholder="Email address" autocomplete="email" aria-label="Email address">
+<input id="password" type="password" placeholder="Password (at least 6 characters)" autocomplete="current-password" aria-label="Password">
+<div class="two"><button id="loginBtn">Log in</button><button id="signupBtn">Create account</button></div>
+<div id="loginError" class="err" role="alert"></div>
+</div></section>
+<section id="role" class="card center hidden"><h2>Welcome! Choose your role</h2><p>This choice determines the tools you can access.</p><div class="stack two"><button class="primary" data-role="student">I'm a student</button><button class="primary" data-role="instructor">I'm an instructor</button></div></section>
+<main id="app" class="hidden">
+<header class="top"><h2 id="hello">Study Space</h2><nav id="nav"></nav><div class="actions"><button id="logout">Log out</button></div></header>
+<div id="alerts" aria-live="polite"></div><div id="view"></div>
+</main></div>
+<dialog id="scoreDialog"><form id="scoreForm"><h3>Mark task as done</h3><label for="score">Score (if applicable)</label><input id="score" type="number" min="0" step="1" value="0"><div class="actions" style="margin-top:14px"><button class="primary" type="submit">Save</button><button type="button" id="cancelScore">Cancel</button></div></form></dialog>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, collection, doc, setDoc, addDoc, deleteDoc, updateDoc, onSnapshot, query, where, getDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+/* Firebase web config: use your own project's values from Firebase Console. */
+const firebaseConfig = {
+  apiKey: "AIzaSyDASz_qrX4wCYMUj0EK1iYhBVzHFPwT23s",
+  authDomain: "lms-amber.firebaseapp.com",
+  projectId: "lms-amber",
+  storageBucket: "lms-amber.firebasestorage.app",
+  messagingSenderId: "334794286876",
+  appId: "1:334794286876:web:367fac54bc6fbb4dea7cd9",
+  measurementId: "G-J0634RYTQ2"
+};
+
+const appFirebase = initializeApp(firebaseConfig);
+const auth = getAuth(appFirebase);
+const db = getFirestore(appFirebase);
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;',"\'":"&#39;"}[c]));
+const HOUR = 3600000, DAY = 86400000;
+let user=null, profile=null, instructorTasks=[], personalTasks=[], progress=[], students=[], tab="tasks", unsubscribers=[], pendingTaskId=null;
+
+function show(section){["login","role","app"].forEach(id=>$("#"+id).classList.toggle("hidden",id!==section));}
+function showError(message){$("#loginError").textContent=message;}
+function authError(e){
+ const messages={"auth/invalid-credential":"Wrong email or password.","auth/email-already-in-use":"This email already has an account. Please log in.","auth/weak-password":"Use at least 6 characters for your password.","auth/invalid-email":"Enter a valid email address.","auth/popup-closed-by-user":"Google sign-in was cancelled.","auth/operation-not-allowed":"Enable this sign-in method in Firebase Authentication."};
+ showError(messages[e.code] || ("Something went wrong: "+(e.code||e.message||"Please try again.")));
+}
+$("#google").addEventListener("click",()=>signInWithPopup(auth,new GoogleAuthProvider()).catch(authError));
+$("#loginBtn").addEventListener("click",()=>signInWithEmailAndPassword(auth,$("#email").value.trim(),$("#password").value).catch(authError));
+$("#signupBtn").addEventListener("click",()=>createUserWithEmailAndPassword(auth,$("#email").value.trim(),$("#password").value).catch(authError));
+$("#logout").addEventListener("click",()=>signOut(auth));
+
+function cleanup(){unsubscribers.forEach(fn=>fn());unsubscribers=[];}
+onAuthStateChanged(auth, async currentUser=>{
+ cleanup(); user=currentUser; profile=null; instructorTasks=[]; personalTasks=[]; progress=[]; students=[];
+ if(!user){show("login");return;}
+ try{
+   const profileRef=doc(db,"users",user.uid), snap=await getDoc(profileRef);
+   if(!snap.exists()){show("role");return;}
+   profile=snap.data(); tab=profile.role==="student"?"tasks":"create"; subscribe(); render();
+ }catch(e){show("app");$("#view").innerHTML=`<div class="card"><h3>Could not load your profile</h3><p>${esc(e.message)}</p><p>Check your Firestore rules and Firebase setup.</p></div>`;}
+});
+document.addEventListener("click",async e=>{
+ const roleButton=e.target.closest("[data-role]"); if(!roleButton||!user)return;
+ try{
+  await setDoc(doc(db,"users",user.uid),{name:user.displayName||user.email?.split("@")[0]||"User",email:user.email||"",role:roleButton.dataset.role,createdAt:Date.now()});
+  const snap=await getDoc(doc(db,"users",user.uid));profile=snap.data();tab=profile.role==="student"?"tasks":"create";subscribe();render();
+ }catch(err){alert("Could not save your role: "+err.message);}
+});
+function subscribe(){
+ cleanup();
+ unsubscribers.push(onSnapshot(query(collection(db,"tasks"),where("by","==","inst")),s=>{instructorTasks=s.docs.map(d=>({id:d.id,...d.data()}));render();},reportDbError));
+ unsubscribers.push(onSnapshot(query(collection(db,"tasks"),where("by","==","me"),where("owner","==",user.uid)),s=>{personalTasks=s.docs.map(d=>({id:d.id,...d.data()}));render();},reportDbError));
+ unsubscribers.push(onSnapshot(collection(db,"progress"),s=>{progress=s.docs.map(d=>({id:d.id,...d.data()}));render();},reportDbError));
+ unsubscribers.push(onSnapshot(query(collection(db,"users"),where("role","==","student")),s=>{students=s.docs.map(d=>({uid:d.id,...d.data()}));render();},reportDbError));
+}
+function reportDbError(e){$("#view").insertAdjacentHTML("afterbegin",`<div class="card" style="margin-bottom:12px"><b>Database error:</b> ${esc(e.message)}<br><small>Check Firestore is enabled and your security rules allow the signed-in user to read/write the required data.</small></div>`);}
+const allTasks=()=>[...instructorTasks,...personalTasks].sort((a,b)=>(a.due||0)-(b.due||0));
+const myProgress=()=>Object.fromEntries(progress.filter(p=>p.uid===user?.uid).map(p=>[p.taskId,p]));
+const completedFor=uid=>progress.filter(p=>p.uid===uid&&p.done);
+const xpFor=uid=>completedFor(uid).reduce((sum,p)=>sum+10+(p.early?5:0),0);
+const fmt=t=>t?new Date(t).toLocaleString([],{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"No deadline";
+const timeLeft=t=>{const d=t-Date.now();if(d<0)return"overdue";const h=Math.floor(d/HOUR);return h<1?Math.max(1,Math.round(d/60000))+" min left":h<48?h+" h left":Math.floor(h/24)+" days left";};
+const progressId=taskId=>user.uid+"_"+taskId;
+function standings(){
+ return students.map(s=>({uid:s.uid,name:s.name||"Student",done:completedFor(s.uid).length,xp:xpFor(s.uid)})).sort((a,b)=>b.done-a.done||b.xp-a.xp).map((s,i)=>({...s,rank:s.done===0?"Beginner":i<3?"Legend":i<10?"Mythic":"Learner"}));
+}
+function renderAlerts(){
+ if(profile?.role!=="student"){$("#alerts").innerHTML="";return;}
+ const p=myProgress(),due=allTasks().filter(t=>!(p[t.id]?.done)&&t.due-Date.now()<DAY);
+ $("#alerts").innerHTML=due.map(t=>`<div class="alert"><span><b>${t.due<Date.now()?"Past deadline":t.due-Date.now()<6*HOUR?"Due today":"Due within a day"}:</b> ${esc(t.title)} · ${fmt(t.due)}</span></div>`).join("");
+}
+function taskRow(t){
+ const p=myProgress()[t.id]||{},isStudent=profile.role==="student",isPersonal=t.by==="me";
+ return `<div class="task ${p.done?"done":""}"><div class="task-main"><b>${esc(t.title)}</b><span class="tag ${t.type==="Quiz"?"quiz":""}">${esc(t.type||"Task")}</span>${t.course?`<small>${esc(t.course)} · </small>`:""}<small class="${!p.done&&t.due<Date.now()?"overdue":""}">${fmt(t.due)} (${p.done?"done":timeLeft(t.due)})</small>${t.file?`<br><small>File name: ${esc(t.file)}</small>`:""}${p.sub?`<br><small>Submitted file name: ${esc(p.sub)}</small>`:""}${p.done?`<br><small>Score: ${Number(p.score)||0}${t.max?"/"+t.max:""}${p.early?" · early bonus +5 XP":""}</small>`:""}</div><div class="actions">${isStudent&&!p.done?`${!isPersonal?`<button data-submit="${t.id}">Submit file</button>`:""}<button class="primary" data-done="${t.id}">Mark done</button>`:""}${isPersonal?`<button data-edit="${t.id}">Edit</button><button class="danger" data-delete="${t.id}">Delete</button>`:""}</div></div>`;
+}
+function studentView(){
+ const p=myProgress(),list=allTasks().sort((a,b)=>(!!p[a.id]?.done-!!p[b.id]?.done)||(a.due||0)-(b.due||0));
+ return `<div class="grid"><section class="card"><h3>Your tasks</h3><p>Tasks are sorted by completion status and nearest deadline.</p>${list.map(taskRow).join("")||'<div class="empty">No tasks yet. Add a personal task or wait for your instructor to publish one.</div>'}</section><form id="personalForm" class="card"><h3>Add a personal task</h3><label for="ptitle">Title</label><input id="ptitle" required maxlength="150"><label for="pdue">Deadline</label><input id="pdue" type="datetime-local" required><button class="primary" style="margin-top:14px">Add task</button></form></div>`;
+}
+function gardenView(){
+ const mine=standings().find(s=>s.uid===user.uid)||{done:0,xp:0,rank:"Beginner"},level=Math.floor(mine.done/3),plant=["🌱","🌿","🪴","🌳","🌸"][Math.min(level,4)];
+ const rows=standings();
+ return `<div class="grid"><section class="card" style="text-align:center"><h3>Your plant</h3><div class="plant">${plant}</div><h3>Level ${level}</h3><p>${mine.done} tasks completed · ${mine.xp} XP</p><div class="bar"><span style="width:${mine.done%3/3*100}%"></span></div><p>${3-mine.done%3} more task(s) to reach the next level. Finish before the deadline for +5 XP.</p><p>Your rank: <b>${mine.rank}</b></p></section><section class="card"><h3>Class ranking</h3><div class="scroll"><table><thead><tr><th>#</th><th>Student</th><th>Done</th><th>XP</th><th>Rank</th></tr></thead><tbody>${rows.map((s,i)=>`<tr ${s.uid===user.uid?'style="font-weight:bold;background:#e4f2eb"':""}><td>${i+1}</td><td>${esc(s.name)}</td><td>${s.done}</td><td>${s.xp}</td><td>${s.rank}</td></tr>`).join("")}</tbody></table></div></section></div>`;
+}
+function createView(){
+ const mine=instructorTasks.filter(t=>t.owner===user.uid).sort((a,b)=>a.due-b.due);
+ return `<div class="grid"><form id="createForm" class="card"><h3>Create a task for students</h3><label for="ctitle">Title</label><input id="ctitle" required maxlength="150"><div class="two"><div><label for="ctype">Type</label><select id="ctype"><option>Activity</option><option>Assignment</option><option>Quiz</option></select></div><div><label for="cmax">Total points</label><input id="cmax" type="number" min="1" value="50" required></div></div><label for="ccourse">Course</label><input id="ccourse" placeholder="e.g. Networking 1"><label for="cdue">Deadline</label><input id="cdue" type="datetime-local" required><button class="primary" style="margin-top:14px">Publish to students</button></form><section class="card"><h3>Published tasks</h3>${mine.map(t=>`<div class="task"><div class="task-main"><b>${esc(t.title)}</b><span class="tag">${esc(t.type)}</span><br><small>${fmt(t.due)}</small></div><button class="danger" data-delete="${t.id}">Delete</button></div>`).join("")||'<p class="empty">You have not published any tasks yet.</p>'}</section></div>`;
+}
+function monitorView(){
+ const mine=instructorTasks.filter(t=>t.owner===user.uid),ids=new Set(mine.map(t=>t.id)),total=mine.length;
+ if(!total)return '<section class="card"><h3>Student progress</h3><p class="empty">Publish a task first to track student progress.</p></section>';
+ return `<section class="card"><h3>Progress on ${total} published task(s)</h3><div class="scroll"><table><thead><tr><th>Student</th><th>Completed</th><th>Progress</th></tr></thead><tbody>${students.map(s=>{const count=progress.filter(p=>p.uid===s.uid&&p.done&&ids.has(p.taskId)).length;return `<tr><td>${esc(s.name||"Student")}</td><td>${count}/${total}</td><td><div class="bar"><span style="width:${count/total*100}%"></span></div></td></tr>`}).join("")}</tbody></table></div></section>`;
+}
+function render(){
+ if(!user||!profile)return;show("app");$("#hello").textContent=(profile.role==="student"?"Hi, ":"Instructor: ")+(profile.name||"User");renderAlerts();
+ const tabs=profile.role==="student"?[["tasks","Tasks"],["garden","Garden & rank"]]:[["create","Create task"],["monitor","Student progress"]];
+ $("#nav").innerHTML=tabs.map(([key,label])=>`<button data-tab="${key}" aria-current="${tab===key}">${label}</button>`).join("");
+ $("#view").innerHTML=profile.role==="student"?(tab==="garden"?gardenView():studentView()):(tab==="monitor"?monitorView():createView());
+}
+document.addEventListener("click",async e=>{
+ const b=e.target.closest("button");if(!b)return;
+ try{
+  if(b.dataset.tab){tab=b.dataset.tab;render();return;}
+  if(b.dataset.delete){const t=allTasks().find(x=>x.id===b.dataset.delete);if(t&&t.owner===user.uid)await deleteDoc(doc(db,"tasks",t.id));return;}
+  if(b.dataset.edit){const t=personalTasks.find(x=>x.id===b.dataset.edit);if(!t)return;const title=prompt("Edit task title:",t.title);if(title?.trim())await updateDoc(doc(db,"tasks",t.id),{title:title.trim()});return;}
+  if(b.dataset.submit){const input=document.createElement("input");input.type="file";input.accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt";input.onchange=async()=>{const file=input.files?.[0];if(!file)return;await setDoc(doc(db,"progress",progressId(b.dataset.submit)),{uid:user.uid,name:profile.name,taskId:b.dataset.submit,sub:file.name,submittedAt:Date.now()},{merge:true});alert("File name recorded. Note: the actual file is not uploaded in this version.");};input.click();return;}
+  if(b.dataset.done){pendingTaskId=b.dataset.done;const t=allTasks().find(x=>x.id===pendingTaskId);$("#score").max=t?.max||"";$("#score").value="0";$("#scoreDialog").showModal();}
+ }catch(err){alert("Action failed: "+err.message);}
+});
+$("#cancelScore").addEventListener("click",()=>$("#scoreDialog").close());
+$("#scoreForm").addEventListener("submit",async e=>{
+ e.preventDefault();if(!pendingTaskId)return;
+ const t=allTasks().find(x=>x.id===pendingTaskId);const score=Number($("#score").value)||0;
+ try{await setDoc(doc(db,"progress",progressId(pendingTaskId)),{uid:user.uid,name:profile.name,taskId:pendingTaskId,done:true,score,early:Date.now()<(t?.due||0),at:Date.now()},{merge:true});$("#scoreDialog").close();pendingTaskId=null;}catch(err){alert("Could not save progress: "+err.message);}
+});
+document.addEventListener("submit",async e=>{
+ if(e.target.id==="personalForm"){e.preventDefault();try{await addDoc(collection(db,"tasks"),{title:$("#ptitle").value.trim(),type:"Personal",course:"",due:new Date($("#pdue").value).getTime(),by:"me",owner:user.uid,createdAt:Date.now()});e.target.reset();}catch(err){alert("Could not add task: "+err.message);}}
+ if(e.target.id==="createForm"){e.preventDefault();try{await addDoc(collection(db,"tasks"),{title:$("#ctitle").value.trim(),type:$("#ctype").value,course:$("#ccourse").value.trim(),due:new Date($("#cdue").value).getTime(),max:Number($("#cmax").value)||50,by:"inst",owner:user.uid,createdAt:Date.now()});e.target.reset();}catch(err){alert("Could not publish task: "+err.message);}}
+});
+</script>
+</body>
+</html>
